@@ -11,15 +11,14 @@
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/toolbar"
-        android:title="To-Do"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
         android:elevation="4dp"
-        android:theme="@style/Base.ThemeOverlay.AppCompat.ActionBar"
         android:popupTheme="@style/Theme.AppCompat.Light"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize">
-    </android.support.v7.widget.Toolbar>
+        android:theme="@style/Base.ThemeOverlay.AppCompat.ActionBar"
+        android:title="To-Do"></android.support.v7.widget.Toolbar>
 
-    <include layout="@layout/activity_main_content"/>
+    <include layout="@layout/activity_main_content" />
 
 </RelativeLayout>

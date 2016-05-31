@@ -4,12 +4,12 @@ package me.sidhin.todolist;/*
 
 public class Task {
 
-    public int ID ;
-    public String Details ;
-    public boolean done = false ;
+    public int ID;
+    public String Details;
+    public boolean done = false;
 
-    public Task(int id, String Info){
-        ID = id ;
+    public Task(int id, String Info) {
+        ID = id;
         Details = Info;
     }
 }
