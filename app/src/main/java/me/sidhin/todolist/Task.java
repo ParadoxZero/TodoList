@@ -12,4 +12,9 @@ public class Task {
         ID = id;
         Details = Info;
     }
+
+    @Override
+    public String toString() {
+        return Details;
+    }
 }

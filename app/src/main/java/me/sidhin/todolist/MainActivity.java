@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         db = new TaskDatabase(this);
         tasks = db.getAllTask();
+        Log.i("Database", tasks.size() + "");
         if (tasks.size() > 0)
             lastIndex = tasks.get(tasks.size() - 1).ID + 1;
         /* BUG! items from database not being displayed,
@@ -39,7 +41,8 @@ public class MainActivity extends AppCompatActivity {
          * TODO solve listView diplay bug
          */
 
-        adapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item);
+        adapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, tasks);
+        //adapter = new ToDoListViewAdapter(this,tasks);
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
 
@@ -97,6 +100,7 @@ public class MainActivity extends AppCompatActivity {
         db.addEntry(new Task(lastIndex, details));
         tasks = db.getAllTask();
         lastIndex++;
+        Log.i("Database", lastIndex + "");
         adapter.notifyDataSetChanged();
     }
 
