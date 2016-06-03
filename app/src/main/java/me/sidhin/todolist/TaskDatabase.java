@@ -79,7 +79,6 @@ public class TaskDatabase extends SQLiteOpenHelper {
     }
 
     public ArrayList<Task> getAllTask() {
-        ArrayList<Task> list = new ArrayList<Task>();
         SQLiteDatabase db = getReadableDatabase();
         String[] projection = {
                 COLUMN_NAME_ID,
@@ -87,16 +86,7 @@ public class TaskDatabase extends SQLiteOpenHelper {
                 COLUMN_NAME_DONE
         };
         Cursor cursor = db.query(TABLE_NAME_TASK, projection, null, null, null, null, null);
-        cursor.moveToFirst();
-        while (cursor.isAfterLast() == false) {
-            Task t = new Task(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ID)),
-                    cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TASK)));
-            if (cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_DONE)) == 1)
-                t.done = true;
-            list.add(t);
-            cursor.moveToNext();
-        }
-        return list;
+        return getListofTaskFromCursor(cursor);
     }
 
     public void update(Task t) {
@@ -109,6 +99,20 @@ public class TaskDatabase extends SQLiteOpenHelper {
             i = 1;
         values.put(COLUMN_NAME_DONE, i);
         db.update(TABLE_NAME_TASK, values, COLUMN_NAME_ID + "=" + t.ID, null);
+    }
+
+    private ArrayList<Task> getListofTaskFromCursor(Cursor cursor) {
+        ArrayList<Task> list = new ArrayList<>();
+        cursor.moveToFirst();
+        while (!cursor.isAfterLast()) {
+            Task t = new Task(cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_ID)),
+                    cursor.getString(cursor.getColumnIndex(COLUMN_NAME_TASK)));
+            if (cursor.getInt(cursor.getColumnIndex(COLUMN_NAME_DONE)) == 1)
+                t.done = true;
+            list.add(t);
+            cursor.moveToNext();
+        }
+        return list;
     }
 }
 

@@ -3,6 +3,7 @@ package me.sidhin.todolist;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.graphics.Paint;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
@@ -10,10 +11,11 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
@@ -24,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private int lastIndex = 0;
     private ArrayAdapter adapter;
     private ListView listView;
-
+    private Context context;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,15 +38,55 @@ public class MainActivity extends AppCompatActivity {
         Log.i("Database", tasks.size() + "");
         if (tasks.size() > 0)
             lastIndex = tasks.get(tasks.size() - 1).ID + 1;
-        /* BUG! items from database not being displayed,
-         * Even when using simple adapter.
-         * TODO solve listView diplay bug
-         */
 
-        adapter = new ArrayAdapter(this, R.layout.support_simple_spinner_dropdown_item, tasks);
-        //adapter = new ToDoListViewAdapter(this,tasks);
+        adapter = new ToDoListViewAdapter(this, tasks);
+        //adapter = new ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,tasks);
+        context = this;
         listView = (ListView) findViewById(R.id.listView);
         listView.setAdapter(adapter);
+        listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() { //DELETE SELECTED TASK
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, final View v, int position, long id) {
+                AlertDialog dialog = new AlertDialog.Builder(context)
+                        .setTitle("Delete Task")
+                        .setMessage("Do you want to delete this Task ?")
+                        .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                Task t = (Task) v.getTag(ToDoListViewAdapter.TAG_KEY_TASK);
+                                db.deleteEntry(t.ID);
+                                tasks.clear();
+                                tasks.addAll(db.getAllTask());
+                                adapter.notifyDataSetChanged();
+                            }
+                        })
+                        .setNegativeButton("Cancel", null)
+                        .create();
+                dialog.show();
+                return true;
+            }
+        });
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() { //TO MARK TASK DONE
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Task t = (Task) view.getTag(ToDoListViewAdapter.TAG_KEY_TASK);
+                ViewHolder holder = (ViewHolder) view.getTag(ToDoListViewAdapter.TAG_KEY_HOLDER);
+                t.done = !t.done;
+                holder.ck1.setChecked(t.done);
+                if (t.done) {
+                    /* To set striked */
+                    holder.details.setPaintFlags(holder.details.getPaintFlags()
+                            | Paint.STRIKE_THRU_TEXT_FLAG);
+
+                } else {
+                    holder.details.setPaintFlags(holder.details.getPaintFlags()
+                            & ~(Paint.STRIKE_THRU_TEXT_FLAG));
+                }
+
+                db.update(t);
+            }
+        });
 
     }
 
@@ -87,7 +129,6 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                         String task = String.valueOf(DialogText.getText());
                         addEntry(task);
-                        Toast.makeText(c, task + tasks.size(), Toast.LENGTH_SHORT).show(); // Just for debug
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -98,9 +139,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void addEntry(String details) {
         db.addEntry(new Task(lastIndex, details));
-        tasks = db.getAllTask();
+        tasks.clear();
+        tasks.addAll(db.getAllTask());
         lastIndex++;
-        Log.i("Database", lastIndex + "");
         adapter.notifyDataSetChanged();
     }
 
