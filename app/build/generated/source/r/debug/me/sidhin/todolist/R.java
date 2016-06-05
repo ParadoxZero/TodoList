@@ -1624,6 +1624,7 @@ containing a value of this type.
         public static final int action_bar_spinner=0x7f0c0001;
         public static final int action_bar_subtitle=0x7f0c0022;
         public static final int action_bar_title=0x7f0c0021;
+        public static final int action_clear_tasks=0x7f0c0062;
         public static final int action_context_bar=0x7f0c0042;
         public static final int action_divider=0x7f0c0056;
         public static final int action_menu_divider=0x7f0c0002;
@@ -1631,7 +1632,6 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f0c003e;
         public static final int action_mode_bar_stub=0x7f0c003d;
         public static final int action_mode_close_button=0x7f0c0023;
-        public static final int action_settings=0x7f0c0062;
         public static final int activity_chooser_view_content=0x7f0c0024;
         public static final int alertTitle=0x7f0c0030;
         public static final int always=0x7f0c001c;

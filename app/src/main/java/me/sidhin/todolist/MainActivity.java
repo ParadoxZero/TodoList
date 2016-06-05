@@ -34,10 +34,15 @@ public class MainActivity extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         db = new TaskDatabase(this);
-        tasks = db.getAllTask();
+        //tasks = db.getAllTask();
+        tasks = new ArrayList<>();
+        updateTasks();
+        Log.i("Database",tasks.toString());
         Log.i("Database", tasks.size() + "");
         if (tasks.size() > 0)
             lastIndex = tasks.get(tasks.size() - 1).ID + 1;
+        else
+            lastIndex = 1 ;
 
         adapter = new ToDoListViewAdapter(this, tasks);
         //adapter = new ArrayAdapter(this,R.layout.support_simple_spinner_dropdown_item,tasks);
@@ -46,17 +51,16 @@ public class MainActivity extends AppCompatActivity {
         listView.setAdapter(adapter);
         listView.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() { //DELETE SELECTED TASK
             @Override
-            public boolean onItemLongClick(AdapterView<?> parent, final View v, int position, long id) {
+            public boolean onItemLongClick(AdapterView<?> parent, final View v, final int position, long id) {
                 AlertDialog dialog = new AlertDialog.Builder(context)
                         .setTitle("Delete Task")
                         .setMessage("Do you want to delete this Task ?")
                         .setPositiveButton("Delete", new DialogInterface.OnClickListener() {
                             @Override
                             public void onClick(DialogInterface dialog, int which) {
-                                Task t = (Task) v.getTag(ToDoListViewAdapter.TAG_KEY_TASK);
+                                Task t = tasks.get(position);
                                 db.deleteEntry(t.ID);
-                                tasks.clear();
-                                tasks.addAll(db.getAllTask());
+                                updateTasks();
                                 adapter.notifyDataSetChanged();
                             }
                         })
@@ -70,12 +74,12 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() { //TO MARK TASK DONE
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Task t = (Task) view.getTag(ToDoListViewAdapter.TAG_KEY_TASK);
+                Task t = tasks.get(position);
                 ViewHolder holder = (ViewHolder) view.getTag(ToDoListViewAdapter.TAG_KEY_HOLDER);
                 t.done = !t.done;
-                holder.ck1.setChecked(t.done);
+                holder.ck1.setChecked(t.done);/*
                 if (t.done) {
-                    /* To set striked */
+                    /* To set striked *//*
                     holder.details.setPaintFlags(holder.details.getPaintFlags()
                             | Paint.STRIKE_THRU_TEXT_FLAG);
 
@@ -83,8 +87,10 @@ public class MainActivity extends AppCompatActivity {
                     holder.details.setPaintFlags(holder.details.getPaintFlags()
                             & ~(Paint.STRIKE_THRU_TEXT_FLAG));
                 }
-
+                */
                 db.update(t);
+                updateTasks();
+                adapter.notifyDataSetChanged();
             }
         });
 
@@ -100,9 +106,11 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_settings:
+            case R.id.action_clear_tasks:
                 /* todo add settings activity */
-
+                db.deleteAll();
+                updateTasks();
+                adapter.notifyDataSetChanged();
                 return true;
 
             case R.id.action_add:
@@ -128,7 +136,8 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         String task = String.valueOf(DialogText.getText());
-                        addEntry(task);
+                        if(task.length()>0)
+                            addEntry(task);
                     }
                 })
                 .setNegativeButton("Cancel", null)
@@ -139,10 +148,15 @@ public class MainActivity extends AppCompatActivity {
 
     private void addEntry(String details) {
         db.addEntry(new Task(lastIndex, details));
-        tasks.clear();
-        tasks.addAll(db.getAllTask());
+        updateTasks();
         lastIndex++;
         adapter.notifyDataSetChanged();
+    }
+
+    private void updateTasks(){
+        tasks.clear();
+        tasks.addAll(db.getUndoneTasks());
+        tasks.addAll(db.getDoneTasks());
     }
 
 }

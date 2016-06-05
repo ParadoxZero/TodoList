@@ -7,6 +7,7 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import java.util.ArrayList;
 
@@ -75,8 +76,15 @@ public class TaskDatabase extends SQLiteOpenHelper {
 
     public void deleteEntry(int key) {
         SQLiteDatabase db = getWritableDatabase();
-        db.execSQL("DELETE FROM " + TABLE_NAME_TASK + " WHERE " + COLUMN_NAME_ID + "=\"" + key + "\";");
+        Log.i("Database", "Deleted key = " + key);
+        db.execSQL("DELETE FROM " + TABLE_NAME_TASK + " WHERE " + COLUMN_NAME_ID + "=" + key + ";");
     }
+
+    public void deleteAll(){
+        SQLiteDatabase db = getWritableDatabase();
+        db.delete(TABLE_NAME_TASK,null,null);
+    }
+
 
     public ArrayList<Task> getAllTask() {
         SQLiteDatabase db = getReadableDatabase();
@@ -89,6 +97,26 @@ public class TaskDatabase extends SQLiteOpenHelper {
         return getListofTaskFromCursor(cursor);
     }
 
+    public ArrayList<Task> getUndoneTasks(){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                COLUMN_NAME_ID,
+                COLUMN_NAME_TASK,
+                COLUMN_NAME_DONE
+        };
+        Cursor cursor = db.query(TABLE_NAME_TASK,projection,COLUMN_NAME_DONE +"=?",new String[]{"0"},null,null,null);
+        return getListofTaskFromCursor(cursor);
+    }
+    public ArrayList<Task> getDoneTasks(){
+        SQLiteDatabase db = getReadableDatabase();
+        String[] projection = {
+                COLUMN_NAME_ID,
+                COLUMN_NAME_TASK,
+                COLUMN_NAME_DONE
+        };
+        Cursor cursor = db.query(TABLE_NAME_TASK,projection,COLUMN_NAME_DONE +"=?",new String[]{"1"},null,null,COLUMN_NAME_ID+" DESC");
+        return getListofTaskFromCursor(cursor);
+    }
     public void update(Task t) {
         SQLiteDatabase db = getWritableDatabase();
         ContentValues values = new ContentValues();

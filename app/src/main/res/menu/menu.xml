@@ -10,8 +10,8 @@
 
     <!-- Settings, should always be in the overflow -->
     <item
-        android:id="@+id/action_settings"
-        android:title="Settings"
+        android:id="@+id/action_clear_tasks"
+        android:title="Clear Tasks"
         app:showAsAction="never" />
 
 </menu>

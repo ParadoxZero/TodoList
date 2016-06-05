@@ -15,6 +15,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return Details;
+        return "ID =" + ID+ ":" + Details;
     }
 }

@@ -5,6 +5,7 @@ package me.sidhin.todolist;/*
 import android.app.Activity;
 import android.content.Context;
 import android.graphics.Paint;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ import java.util.ArrayList;
 public class ToDoListViewAdapter extends ArrayAdapter {
 
     public static int TAG_KEY_HOLDER = R.id.detail;
-    public static int TAG_KEY_TASK = R.id.listView;
 
     private ArrayList<Task> tasks;
     private Context context;
@@ -44,7 +44,7 @@ public class ToDoListViewAdapter extends ArrayAdapter {
     @Override
     public View getView(final int position, View convertView, ViewGroup parent) {
         final ViewHolder holder;
-
+        Log.i("Display", position + "");
         LayoutInflater inflater = ((Activity) context).getLayoutInflater();
 
         if (convertView == null) {
@@ -56,7 +56,6 @@ public class ToDoListViewAdapter extends ArrayAdapter {
 
             holder.ck1 = (CheckBox) convertView
                     .findViewById(R.id.checkBox);
-            convertView.setTag(TAG_KEY_TASK, tasks.get(position));
             convertView.setTag(TAG_KEY_HOLDER, holder);
 
         } else {
@@ -64,13 +63,17 @@ public class ToDoListViewAdapter extends ArrayAdapter {
             holder = (ViewHolder) convertView.getTag(TAG_KEY_HOLDER);
         }
 
-        holder.details.setText(tasks.get(position).toString());
+        holder.details.setText(tasks.get(position).Details);
         holder.ck1.setChecked(tasks.get(position).done);
         holder.ck1.setClickable(false);
             /* To StrikeThrough textView in case of done */
-        if (tasks.get(position).done) {
+        if (holder.ck1.isChecked()) {
             holder.details.setPaintFlags(holder.details.getPaintFlags()
                     | Paint.STRIKE_THRU_TEXT_FLAG);
+        }
+        else{
+            holder.details.setPaintFlags(holder.details.getPaintFlags()
+                    & ~(Paint.STRIKE_THRU_TEXT_FLAG));
         }
         return convertView;
     }

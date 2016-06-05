@@ -461,6 +461,7 @@ int id action_bar_root 0x7f0c003c
 int id action_bar_spinner 0x7f0c0001
 int id action_bar_subtitle 0x7f0c0022
 int id action_bar_title 0x7f0c0021
+int id action_clear_tasks 0x7f0c0062
 int id action_context_bar 0x7f0c0042
 int id action_divider 0x7f0c0056
 int id action_menu_divider 0x7f0c0002
@@ -468,7 +469,6 @@ int id action_menu_presenter 0x7f0c0003
 int id action_mode_bar 0x7f0c003e
 int id action_mode_bar_stub 0x7f0c003d
 int id action_mode_close_button 0x7f0c0023
-int id action_settings 0x7f0c0062
 int id activity_chooser_view_content 0x7f0c0024
 int id alertTitle 0x7f0c0030
 int id always 0x7f0c001c
